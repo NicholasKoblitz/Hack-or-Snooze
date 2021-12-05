@@ -16,10 +16,22 @@
 #favorate-form{
   position: absolute;
   top: 5rem;
-  right: 5rem
+  right: 5rem;
+  border: 1px solid black;
+  padding: 10px;
+  background-color: #f6f6ef;
 }
-#delete-form {
+#favorate-form h2
+{
+  text-align: center;
+}
+#favorate-form button {
+  position: relative;
+  left: 2rem;
+  width: 5rem;
+}
+/* #delete-form {
   position: absolute;
   top: 5rem;
   right: 5rem
-}
+} */

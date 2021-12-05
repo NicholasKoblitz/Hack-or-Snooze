@@ -19,8 +19,7 @@ async function getAndShowStoriesOnStart() {
  * Returns the markup for the story.
  */
 
-function generateStoryMarkup(story) {
-  // console.debug("generateStoryMarkup", story);
+function generateStoryMarkup(story,) {
 
   const hostName = story.getHostName();
   return $(`
@@ -35,7 +34,14 @@ function generateStoryMarkup(story) {
     `);
 }
 
+
+function createDeleteBtn() {
+  return `<button class="delete"> Delete</button>`
+}
+
+// Creates a user story and appends it to the page
 async function getNewStoryInfo(evt) {
+  const userStory = true;
   console.log(evt)
   evt.preventDefault();
 
@@ -47,18 +53,13 @@ async function getNewStoryInfo(evt) {
     const obj = { title: $title, author: $author, url: $url }
     const createdStory = await storyList.addStory(currentUser, obj)
 
-    const $generateStory = generateStoryMarkup(createdStory);
+    const $generateStory = generateStoryMarkup(createdStory, userStory);
 
     $allStoriesList.append($generateStory);
     $storiesForm.trigger("reset")
-
-    $storiesForm.hide();
-
+    $storiesForm.slideUp("slow")
   }
-
 }
-
-
 
 /** Gets list of stories from server, generates their HTML, and puts on page. */
 
@@ -70,45 +71,33 @@ function putStoriesOnPage() {
   // loop through all of our stories and generate HTML for them
   for (let story of storyList.stories) {
     const $story = generateStoryMarkup(story);
-    $allStoriesList.append($story);
+
+    $allStoriesList.prepend($story);
   }
 
   $allStoriesList.show();
 }
 
-
 $storiesForm.on("submit", getNewStoryInfo);
 
 
+// Deletes a user story
 async function deleteYourStory(evt) {
-  const stories = await StoryList.getStories();
-  console.log(evt.target)
-  let response;
+  evt.preventDefault()
+  const $title = $("#delete-story-title").val();
 
-  for (let story of stories.stories) {
-    console.log(story)
-    if (evt.target.id === story.storyId) {
-      response = await axios({
-        url: `${BASE_URL}/stories/${story.storyId}`,
-        method: "DELETE",
-        data: {
-          token: currentUser.loginToken
-        }
-      })
+  for (let story of storyList.stories) {
+    if (story.title === $title) {
+      storyList.deleteStory(currentUser, story.storyId)
+      $allStoriesList.remove(story);
     }
   }
 
+  $("#delete-stories-form").trigger("reset");
+  $("#delete-stories-form").slideUp("slow");
+
+  putStoriesOnPage()
+
 }
 
-
-function getli() {
-  const storyLink = (document.getElementsByTagName("li"))
-  const liList = []
-
-  for (let li of Array.from(storyLink)) {
-    console.log(li.children)
-    li.addEventListener("click", deleteYourStory)
-    liList.push(li)
-  }
-  console.log(liList)
-}
+$("#delete-stories-form").on("submit", deleteYourStory)

@@ -39,7 +39,7 @@ function updateNavOnLogin() {
 // Shows the stories form
 function goToStoryForm() {
   console.debug("goToStoryForm");
-  $("#stories-form").show();
+  $("#stories-form").slideDown("slow");
 }
 
 $("#nav-stories").on('click', goToStoryForm);
@@ -47,9 +47,13 @@ $("#nav-stories").on('click', goToStoryForm);
 // Shows favorates form
 function goToFavoriteForm() {
   console.debug("goToStoryForm");
-  $("#favorate-form").show();
+  $("#favorate-form").slideDown("slow");
 }
 
 $("#favorate").on('click', goToFavoriteForm);
 
+function goToDeleteStoryForm() {
+  $("#delete-stories-form").slideDown("slow")
+}
 
+$("#delete-story").on("click", goToDeleteStoryForm)

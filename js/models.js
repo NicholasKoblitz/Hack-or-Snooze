@@ -73,6 +73,7 @@ class StoryList {
    * Returns the new Story instance
    */
 
+  // Requests the API to create a user story
   async addStory(user, newStory) {
     const response = await axios({
       url: `${BASE_URL}/stories`,
@@ -83,11 +84,30 @@ class StoryList {
       }
     });
     const addStory = new Story(response.data.story);
+    this.stories.push(addStory);
+    user.ownStories.push(addStory);
 
     return addStory;
+  }
+  // Requests the API to delete a user story
+  async deleteStory(user, storyId) {
+    await axios({
+      url: `${BASE_URL}/stories/${storyId}`,
+      method: "DELETE",
+      data: {
+        token: user.loginToken
+      }
+    })
+    this.stories = this.stories.filter(val => val.storyId !== storyId);
+    user.ownStories = user.ownStories.filter(val => val.storyId !== storyId);
+    user.favorites = user.favorites.filter(val => val.storyId !== storyId);
 
   }
+
 }
+
+
+
 
 
 /******************************************************************************
@@ -204,4 +224,31 @@ class User {
       return null;
     }
   }
+  // Requests the API to create a userfavorite
+  async addFavorite(story) {
+    const response = await axios({
+      url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+      method: "POST",
+      data: {
+        token: this.loginToken
+      }
+    })
+    this.favorites.push(story);
+    user.favorites.push(story);
+  }
+  // Requests the API to delete a user favorite
+  async deleteFavorite(story) {
+    const response = await axios({
+      url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+      method: "DELETE",
+      data: {
+        token: this.loginToken
+      }
+    })
+    this.favorites = this.favorites.filter(val => val.storyId !== story.storyId);
+    user.favorites = user.favorites.filter(val => val.storyId !== story.storyId)
+  }
+
+
+
 }

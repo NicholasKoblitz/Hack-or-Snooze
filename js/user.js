@@ -110,7 +110,7 @@ function saveUserCredentialsInLocalStorage() {
 function updateUIOnUserLogin() {
   console.debug("updateUIOnUserLogin");
 
-  $allStoriesList.show();
+  $allStoriesList.slideDown("slow");
 
   updateNavOnLogin();
 }
@@ -120,26 +120,18 @@ async function addFavorateStory(evt) {
   evt.preventDefault();
   const stories = await StoryList.getStories();
   const $favorateStory = $("#favorate-name").val()
-  let id;
 
   for (let story of stories.stories) {
     if (story.title === $favorateStory) {
-      id = story.storyId;
+      currentUser.addFavorite(story)
+      console.log(story.id)
     }
   }
 
-  const response = await axios({
-    url: `${BASE_URL}/users/${currentUser.username}/favorites/${id}`,
-    method: "POST",
-    data: {
-      token: currentUser.loginToken
-    }
-  })
-
   $("#favorate-form").trigger("reset")
-  $("#favorate-form").hide()
-  return currentUser
+  $("#favorate-form").slideUp("slow")
 }
+
 
 
 
@@ -153,17 +145,10 @@ async function deleteFavorateStory(evt) {
 
   for (let story of stories.stories) {
     if (story.title === $favorateStory) {
-      id = story.storyId;
+      currentUser.deleteFavorite(story);
+
     }
   }
-
-  const response = await axios({
-    url: `${BASE_URL}/users/${currentUser.username}/favorites/${id}`,
-    method: "DELETE",
-    data: {
-      token: currentUser.loginToken
-    }
-  })
 
   $("#favorate-form").trigger("reset")
   $("#favorate-form").hide()
